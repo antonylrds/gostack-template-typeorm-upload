@@ -30,6 +30,11 @@ export default class CreateTransactionsTable1609893010169
             isNullable: false,
           },
           {
+            name: 'value',
+            type: 'double precision',
+            default: 0,
+          },
+          {
             name: 'type',
             type: 'enum',
             enum: ['income', 'outcome'],
@@ -43,6 +48,7 @@ export default class CreateTransactionsTable1609893010169
           {
             name: 'updated_at',
             type: 'timestamp with time zone',
+            default: 'now()',
           },
         ],
       }),
