@@ -30,6 +30,7 @@ class CreateTransactionService {
     }
 
     const balance = await transactionsRepository.getBalance();
+    console.log(balance);
     if (type === 'outcome' && balance.total - roundedValue < 0) {
       throw new AppError('Insufficient funds', 400);
     }

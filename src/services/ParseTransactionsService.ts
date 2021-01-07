@@ -24,7 +24,7 @@ class ParseTransactionsService {
 
     parseCSV.on('data', line => {
       const [title, type, value, category] = line;
-      transactions.push({ title, type, value, category });
+      transactions.push({ title, type, value: Number(value), category });
     });
 
     await new Promise(resolve => {

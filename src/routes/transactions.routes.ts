@@ -7,8 +7,8 @@ import uploadConfig from '../config/upload';
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateTransactionService from '../services/CreateTransactionService';
 import DeleteTransactionService from '../services/DeleteTransactionService';
-import ImportTransactionsService from '../services/ImportTransactionsService';
 import ParseTransactionsService from '../services/ParseTransactionsService';
+import Transaction from '../models/Transaction';
 
 const transactionsRouter = Router();
 const upload = multer(uploadConfig);
@@ -58,14 +58,26 @@ transactionsRouter.post(
   '/import',
   upload.single('file'),
   async (request, response) => {
+    const transactions: Transaction[] = [];
     const parserTransactions = new ParseTransactionsService();
+    const createTransaction = new CreateTransactionService();
 
     const filePath = path.join(uploadConfig.directory, request.file.filename);
     const transactionsArray = await parserTransactions.execute(filePath);
 
-    const importTransactions = new ImportTransactionsService();
+    for (let index = 0; index < transactionsArray.length; index += 1) {
+      const { title, type, value, category } = transactionsArray[index];
 
-    const transactions = await importTransactions.execute(transactionsArray);
+      transactions.push(
+        // eslint-disable-next-line no-await-in-loop
+        await createTransaction.execute({
+          title,
+          type,
+          value,
+          categoryTitle: category,
+        }),
+      );
+    }
 
     return response.json(transactions);
   },
